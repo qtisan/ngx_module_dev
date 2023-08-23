@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "/usr/local/nginx/conf"
+		},
+		{
+			"path": "/usr/local/nginx/logs"
+		},
+		{
+			"path": "/ngx_module_dev"
+		}
+	],
+	"settings": {
+		"C_Cpp.default.includePath": [
+			"${default}",
+			"/usr/local/include",
+			"/usr/include",
+			"${WORKPLACE}/nginx/**",
+			"${WORKPLACE}/pcre2/**",
+			"${WORKPLACE}/ngx_http_save_ctx_2store/**"
+		],
+		"files.associations": {
+			"*.j2": "html",
+			"*.json": "jsonc",
+			"ngx_config.h": "c",
+			"ngx_core.h": "c",
+			"ngx_http.h": "c",
+			"stdio.h": "c"
+		},
+	},
+}
