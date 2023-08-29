@@ -3,6 +3,8 @@
 file_path="/etc/sysctl.d/10-ptrace.conf"
 ptrace_text="kernel.yama.ptrace_scope=0"
 
+echo "Modify the ptrace scope..." &&\
+echo "replace the ptrace scope to 0..."
 if [ ! -f "$file_path" ]; then
     echo "$ptrace_text" | sudo tee "$file_path" > /dev/null
 else
@@ -15,4 +17,6 @@ else
     fi
 fi
 
-sudo sysctl -p "$file_path"
+echo "reload the ptrace scope..." &&\
+sudo sysctl -p "$file_path" &&\
+echo "ptrace scope modified to 0."

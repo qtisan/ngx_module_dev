@@ -25,7 +25,9 @@
 			"ngx_config.h": "c",
 			"ngx_core.h": "c",
 			"ngx_http.h": "c",
-			"stdio.h": "c"
+			"stdio.h": "c",
+			"cmath": "c",
+			"complex": "c"
 		},
 	},
 }

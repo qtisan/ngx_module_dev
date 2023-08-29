@@ -36,25 +36,25 @@ cd pcre2
 ```
 
 see the README of pcre2 for more details.
+
 > Building PCRE2 using autotools
-> 
-> ------------------------------
+>
+> ---
 
 > The following instructions assume the use of the widely used "configure; make;
 > make install" (autotools) process.
-> 
+>
 > If you have downloaded and unpacked a PCRE2 release tarball, run the
 > "configure" command from the PCRE2 directory, with your current directory set
 > to the directory where you want the files to be created. This command is a
 > standard GNU "autoconf" configuration script, for which generic instructions
 > are supplied in the file INSTALL.
-> 
+>
 > The files in the GitHub repository do not contain "configure". If you have
 > downloaded the PCRE2 source files from GitHub, before you can run "configure"
 > you must run the shell script called autogen.sh. This runs a number of
 > autotools to create a "configure" script (you must of course have the autotools
 > commands installed in order to do this).
-
 
 ## With Devcontainer
 
@@ -64,9 +64,13 @@ Change the congifurations of:
 - image
 - volumes bind
 
-```
+```sh
 docker-compose -f compose-dev.yaml up -d
 ```
+
+> **IMPORTANT**
+>
+> Most of tasks below has been done in `entrypoint.sh` when compose up. see the source for more.
 
 ## Presets
 
@@ -125,9 +129,7 @@ Next:
 
 The project `conf` and `logs` indicates the nginx conf and logs directory, for debugging.
 
-
 ## Development
-
 
 ### Configure Script
 
@@ -170,6 +172,8 @@ make install
 
 ### Recompile
 
+> See `recompile.sh` for more details, to compelete the following steps.
+
 1. Modify some code in the custom module.
 2. Recompile the custom module.
 
@@ -201,6 +205,7 @@ worker_processes  1;
 error_log  logs/error.log  debug;
 events {
     worker_connections  1024;
+    debug_connection 127.0.0.1;
 }
 
 http {
@@ -243,22 +248,24 @@ http {
 }
 ```
 
-
 ### Enable Debugging
 
-**Debug on nginx startup**:
+#### **Debug on nginx startup**:
 
 - Add breakpoints to the source code, `$WORKPLACE/ngx_http_save_ctx_2store/save_ctx_2store_module.c`.
-    Only the breakpoints in the startup cycle functions will be triggered.
+  Only the breakpoints in the startup cycle functions will be triggered.
 - Use the VSCode debugging tool to startup the nginx process.
-    At the `Run and Debug` Panel, select `Nginx Start` script, click the `Start Debugging` button.
+  At the `Run and Debug` Panel, select `Nginx Start` script, click the `Start Debugging` button.
 
-**Debug on nginx running**:
+#### **Debug on nginx running**:
 
 Attach the GDB to the running nginx process.
 
 **IMPORTANT:**
 
+It will modify the `kernel.yama.ptrace_scope` to `0`, to allow the GDB to attach the running nginx process.
+
+See more in `README.sysctl`, and it is done at the `entrypoint.sh` script.
 
 see [Cannot attach to the process with GDB, at dev container.](#gdb-attach) for more details.
 
@@ -267,10 +274,12 @@ see [Cannot attach to the process with GDB, at dev container.](#gdb-attach) for 
 - Input the `pid` of the running nginx process, and press `Enter`.
 - Enjoy the debugging.
 
+
 ## Touble Shooting
 
-<a id="gdb-attach" />
 ### Cannot attach to the process with GDB, at dev container.
+
+<a id="gdb-attach"></a>
 
 ```
 Unable to start debugging. Attaching to process <process-id> with GDB failed because of insufficient privileges with error message 'ptrace: Operation not permitted.'.
@@ -306,12 +315,14 @@ See at `README.sysctl`
 > Files found under the /etc/sysctl.d directory that end with .conf are
 > parsed within sysctl(8) at boot time. If you want to set kernel variables
 > you can either edit /etc/sysctl.conf or make a new file.
-> 
+>
 > The filename isn't important, but don't make it a package name as it may clash
 > with something the package builder needs later. It must end with .conf though.
-> 
+>
 > My personal preference would be for local system settings to go into
 > /etc/sysctl.d/local.conf but as long as you follow the rules for the names
 > of the file, anything will work. See sysctl.conf(8) man page for details
 > of the format.
 
+There will be no permissions to modify the `kernel.yama.ptrace_scope` in the dev container.
+Solution: Running container with `--privileged` option, add `--cap-add=SYS_PTRACE`, `--security-opt seccomp=unconfined`, `--security-opt apparmor=unconfined` options. Read more at [apparmor denies ptrace to docker-default profile #7276](https://github.com/moby/moby/issues/7276).

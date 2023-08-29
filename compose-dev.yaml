@@ -1,14 +1,17 @@
 services:
   app:
     entrypoint:
+      - /ngx_module_dev/entrypoint.sh
       - sleep
       - infinity
     image: docker/dev-environments-default:stable-1
+    privileged: true
     init: true
     cap_add:
       - SYS_PTRACE
     security_opt:
-      - seccomp=unconfined
+      - seccomp:unconfined
+      - apparmor:unconfined
     volumes:
       - type: bind
         source: /var/run/docker.sock

@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "/usr/local/nginx/sbin/nginx",
       "args": [],
-      "cwd": "${WORKPLACE}/nginx",
+      "cwd": "${env:WORKPLACE}/nginx",
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
       "setupCommands": [
